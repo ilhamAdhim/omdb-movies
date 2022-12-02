@@ -4,9 +4,8 @@ import CustomAlert from "components/CustomAlert";
 import Information from "components/Information";
 
 import { Link } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
-import { getSearchMovie } from "data/data-source";
-import { Button, Container } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Container, Row } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
 import Spinner from "components/Spinner";
 
@@ -21,24 +20,7 @@ const HomePage: React.FC<IHomePageProps> = () => {
   const [isErrorModalShown, setIsErrorModalShown] = useState(false);
   const [error, setError] = useState("");
 
-  const [searchValue, setSearchValue] = useState("");
   const [dataMovie, setDataMovie] = useState<IMovieListSearchAPI>();
-
-  const handleSearch = useCallback(
-    () => async () => {
-      setIsSearching(true);
-      try {
-        setIsLoading(true);
-        const data = await getSearchMovie(searchValue);
-        setDataMovie(data);
-      } catch (error) {
-        setError(error as string);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    []
-  );
 
   useEffect(() => {
     console.log(dataMovie);
@@ -51,8 +33,14 @@ const HomePage: React.FC<IHomePageProps> = () => {
       </Link>
       Ini Home page
       <br />
-      <SearchBar />
-      <Button onClick={() => setIsSearching((prev) => !prev)}>Search</Button>
+      <SearchBar
+        setError={setError}
+        setIsLoading={setIsLoading}
+        setDataMovie={setDataMovie}
+        setIsSearching={setIsSearching}
+        setIsErrorModalShown={setIsErrorModalShown}
+      />
+      {/* <Button onClick={() => setIsSearching((prev) => !prev)}>Search</Button> */}
       <br />
       {/* {!isLoading ? dataMovie?.Search?.map((movie) => (<> {movie.Title} </>))} */}
       {isSearching ? (
@@ -62,11 +50,17 @@ const HomePage: React.FC<IHomePageProps> = () => {
           ) : (
             <>
               <h2>Hasil movie</h2>
-
-              <MovieCard />
-              <MovieCard />
-              <MovieCard />
-              <MovieCard />
+              <Row xs={1} sm={1} md={2} lg={3}>
+                {dataMovie?.Search?.map((movie: IMovieItemSearchAPI) => (
+                  <MovieCard
+                    key={movie.imdbID}
+                    title={movie.Title}
+                    year={movie.Year}
+                    poster={movie.Poster}
+                    {...movie}
+                  />
+                ))}
+              </Row>
             </>
           )}
         </>

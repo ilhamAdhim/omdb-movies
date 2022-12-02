@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const getSearchMovie = async (title: string) => {
+  console.log(title, "title di api");
   try {
     const response = await axios.get(
       `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${title}`
@@ -33,7 +34,7 @@ export const likeMovie = (movieItem: IMovieItemSavedLocal) => {
 
 export const unlikeMovie = (movieItem: IMovieItemSavedLocal) => {
   let newList = getLikedMovies().filter(
-    (movie: IMovieItemSavedLocal) => movie.imdbId !== movieItem.imdbId
+    (movie: IMovieItemSavedLocal) => movie.imdbID !== movieItem.imdbID
   );
 
   localStorage.setItem("likedMovies", JSON.stringify(newList));

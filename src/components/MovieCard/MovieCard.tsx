@@ -1,11 +1,13 @@
 import React from "react";
-import { Card, Col } from "react-bootstrap";
+import { Card, Col, Button } from "react-bootstrap";
+import { FaHeart } from "react-icons/fa";
 
 interface IMovieCardProps {
   title?: string;
   poster?: string;
   year?: string;
   imdbID?: string;
+  isLiked?: boolean;
   handleOpenModal?: (imdbID: string) => void;
 }
 
@@ -13,6 +15,7 @@ const MovieCard: React.FC<IMovieCardProps> = ({
   title,
   poster,
   year,
+  isLiked,
   imdbID,
   handleOpenModal,
 }) => {
@@ -22,19 +25,19 @@ const MovieCard: React.FC<IMovieCardProps> = ({
         <Card.Img variant="top" src={poster} />
         <Card.Body>
           <Card.Title>{title || "Card title"}</Card.Title>
-          <Card.Text>
-            {
-              "This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer."
-            }
-          </Card.Text>
         </Card.Body>
-        <Card.Footer>
+        <Card.Footer
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
           <small className="text-muted">
             {year || "Last updated 3 mins ago"}
           </small>
-          <small className="text-muted">
-            {year || "Last updated 3 mins ago"}
-          </small>
+          <Button
+            variant={isLiked ? "outline-danger" : "primary"}
+            style={{ borderRadius: "50%" }}
+          >
+            <FaHeart color={isLiked ? "maroon" : "white"} />
+          </Button>
         </Card.Footer>
       </Card>
     </Col>

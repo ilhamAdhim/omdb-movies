@@ -1,5 +1,5 @@
-import { ReactComponent as NotFound } from "assets/404.svg";
 import Information from "components/Information";
+import { ReactComponent as NotFound } from "assets/404.svg";
 
 const NoMatchPage = () => {
   return (

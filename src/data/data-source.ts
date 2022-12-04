@@ -47,11 +47,9 @@ export const likeMovie = (movieItem: IMovieItemSavedLocal) => {
 };
 
 export const unlikeMovie = (movieItem: IMovieItemSavedLocal) => {
-  console.log(movieItem);
   let newList = getLikedMovies().filter(
     (movie: IMovieItemSavedLocal) => movie.imdbID !== movieItem.imdbID
   );
 
-  console.log(newList);
   localStorage.setItem("likedMovies", JSON.stringify(newList));
 };

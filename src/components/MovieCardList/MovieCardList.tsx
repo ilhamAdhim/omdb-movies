@@ -1,5 +1,6 @@
 import Information from "components/Information";
 import MovieCard from "components/MovieCard/MovieCard";
+
 import { Row } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
 
@@ -7,14 +8,12 @@ interface IMovieCardListProps {
   dataMovie: IMovieItemSearchAPI[] | IMovieItemSavedLocal[];
   errorMsg?: string;
   openModalDetail: (imdbID: string) => void;
-  actionCard: (movie: IMovieItemSavedLocal) => void;
 }
 
 const MovieCardList: React.FC<IMovieCardListProps> = ({
   dataMovie,
   errorMsg,
   openModalDetail,
-  actionCard,
 }) => {
   return (
     <>
@@ -28,7 +27,6 @@ const MovieCardList: React.FC<IMovieCardListProps> = ({
               year={movie.Year}
               poster={movie.Poster}
               openModalDetail={openModalDetail}
-              actionCard={actionCard}
               {...movie}
             />
           ))}

@@ -1,18 +1,13 @@
 import ModalMovieDetail from "components/ModalMovieDetail";
 import MovieCardList from "components/MovieCardList";
 
-import { getLikedMovies, unlikeMovie } from "data/data-source";
+import { getLikedMovies } from "data/data-source";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-interface IFavoritedMovieProps {
-  // TODO : Add props here
-  // ...
-}
-
-const FavoritedMoviePage: React.FC<IFavoritedMovieProps> = () => {
+const FavoritedMoviePage: React.FC = () => {
   const navigate = useNavigate();
 
   const [selectedMovieID, setSelectedMovieID] = useState("");
@@ -23,7 +18,7 @@ const FavoritedMoviePage: React.FC<IFavoritedMovieProps> = () => {
   useEffect(() => {
     const likedMovies = getLikedMovies();
     setDataLikedMovie(likedMovies);
-  }, []);
+  }, [dataLikedMovie]);
 
   const openModalDetail = useCallback(async (id: string) => {
     setSelectedMovieID(id);
@@ -33,14 +28,6 @@ const FavoritedMoviePage: React.FC<IFavoritedMovieProps> = () => {
   const closeModalDetail = () => {
     setSelectedMovieID("");
     setIsModalDetailOpen(false);
-  };
-
-  const handleDislikeMovie = (movie: IMovieItemSavedLocal) => {
-    console.log("apakah dislik");
-    unlikeMovie(movie);
-    const likedMovies = getLikedMovies();
-    setDataLikedMovie(likedMovies);
-    if (isModalDetailOpen) closeModalDetail();
   };
 
   return (
@@ -56,7 +43,6 @@ const FavoritedMoviePage: React.FC<IFavoritedMovieProps> = () => {
         dataMovie={dataLikedMovie || []}
         errorMsg={"Add some movies to your favorite list"}
         openModalDetail={openModalDetail}
-        actionCard={handleDislikeMovie}
       />
 
       {isModalDetailOpen && (

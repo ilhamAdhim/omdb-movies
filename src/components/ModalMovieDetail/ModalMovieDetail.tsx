@@ -1,10 +1,11 @@
+import Spinner from "components/Spinner";
 import useMediaQuery from "hooks/useMediaQuery";
+
 import { getMovieById } from "data/data-source";
 import { useCallback, useEffect, useState } from "react";
 import { Modal, Badge } from "react-bootstrap";
 import { FaUserAlt, FaStar, FaTags, FaCalendarAlt } from "react-icons/fa";
 import { RiMovie2Fill } from "react-icons/ri";
-import Spinner from "components/Spinner";
 
 interface IModalMovieDetailProps {
   imdbIDCurrent: string;
@@ -31,7 +32,7 @@ const ModalMovieDetail: React.FC<IModalMovieDetailProps> = ({
         const data = await getMovieById(imdbIDCurrent);
         setCurrentMovie(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -88,7 +89,11 @@ const ModalMovieDetail: React.FC<IModalMovieDetailProps> = ({
             </p>
             {currentMovie?.Runtime !== "N/A" && (
               <div style={{ display: "flex", gap: "1em" }}>
-                <RiMovie2Fill fontSize="1em" style={{ margin: "auto 0" }} />
+                <RiMovie2Fill
+                  color="#3E36C1"
+                  fontSize="1em"
+                  style={{ margin: "auto 0" }}
+                />
                 {currentMovie?.Runtime}
               </div>
             )}

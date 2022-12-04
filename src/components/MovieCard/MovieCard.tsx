@@ -1,9 +1,9 @@
 import useMediaQuery from "hooks/useMediaQuery";
-import React from "react";
+import React, { useState } from "react";
 import { Card, Col, Button } from "react-bootstrap";
 import { FaHeart } from "react-icons/fa";
+import { likeMovie, unlikeMovie } from "data/data-source";
 
-type actionCardTypeProps = IMovieItemSavedLocal;
 interface IMovieCardProps {
   id: number;
   imdbID: string;
@@ -12,7 +12,6 @@ interface IMovieCardProps {
   year: string;
   isLiked?: boolean;
   openModalDetail: (imdbID: string) => void;
-  actionCard: (movie: actionCardTypeProps) => void;
 }
 
 const MovieCard: React.FC<IMovieCardProps> = ({
@@ -23,10 +22,16 @@ const MovieCard: React.FC<IMovieCardProps> = ({
   year,
   isLiked,
   openModalDetail,
-  actionCard,
   ...props
 }) => {
+  const [movieLiked, setMovieLiked] = useState(isLiked || false);
   const isSmallScreen = useMediaQuery("(max-width: 600px)");
+
+  const handleLike = (movie: IMovieItemSavedLocal) => {
+    setMovieLiked((prev) => !prev);
+    if (movieLiked) unlikeMovie(movie);
+    else likeMovie(movie);
+  };
 
   return (
     <Col
@@ -71,17 +76,17 @@ const MovieCard: React.FC<IMovieCardProps> = ({
           <Button
             style={{ borderRadius: "50%" }}
             onClick={() =>
-              actionCard({
+              handleLike({
                 imdbID,
                 Title: title,
                 Poster: poster,
                 Year: year,
-                isLiked: true,
+                isLiked: !movieLiked,
               })
             }
-            variant={isLiked ? "outline-danger" : "primary"}
+            variant={movieLiked ? "outline-danger" : "primary"}
           >
-            <FaHeart color={isLiked ? "maroon" : "white"} />
+            <FaHeart color={movieLiked ? "maroon" : "white"} />
           </Button>
         </Card.Footer>
       </Card>

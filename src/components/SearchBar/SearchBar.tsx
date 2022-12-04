@@ -1,6 +1,6 @@
-import { getSearchMovie } from "data/data-source";
-import React, { useCallback, useState } from "react";
 import styles from "./Searchbar.module.css";
+import React, { useCallback, useState } from "react";
+import { getSearchMovie } from "data/data-source";
 
 interface ISearchbarProps {
   // TODO: Can be converted into redux reducers

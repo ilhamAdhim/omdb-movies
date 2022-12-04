@@ -10,38 +10,56 @@ import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
 import {
+  getLikedMovies,
   initializeLocalStorage,
   isStorageExist,
-  likeMovie,
 } from "data/data-source";
 
-interface IHomePageProps {
-  // TODO : Add props here
-  // ...
-}
-
-const HomePage: React.FC<IHomePageProps> = () => {
+const HomePage: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isErrorModalShown, setIsErrorModalShown] = useState(false);
   const [error, setError] = useState("");
 
   const [dataMovie, setDataMovie] = useState<IMovieListSearchAPI>();
-  // const [dataMovieCompareLocal, setDataMovieCompareLocal] =
-  //   useState<IMovieItemSavedLocal[]>();
+  const [likedMovies, setLikedMovies] = useState<IMovieItemSavedLocal[]>([]);
+  const [dataMovieCompareLocal, setDataMovieCompareLocal] =
+    useState<IMovieItemSavedLocal[]>();
 
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
   const [selectedMovieID, setSelectedMovieID] = useState("");
 
-  const handleLikeMovie = (movie: IMovieItemSavedLocal) => {
-    likeMovie(movie);
-  };
-
   // TODO : Get local data to compare which movie is liked
-  // ...
+
+  useEffect(() => {
+    if (likedMovies?.length > 0) {
+      setDataMovieCompareLocal(
+        dataMovie?.Search?.map((movie) => {
+          const isLiked = likedMovies?.find(
+            (likedMovie: IMovieItemSavedLocal) =>
+              likedMovie.imdbID === movie.imdbID
+          );
+          return {
+            ...movie,
+            isLiked: !!isLiked,
+          };
+        })
+      );
+    } else {
+      setDataMovieCompareLocal(
+        dataMovie?.Search?.map((movie) => {
+          return {
+            ...movie,
+            isLiked: false,
+          };
+        })
+      );
+    }
+  }, [dataMovie, likedMovies]);
 
   useEffect(() => {
     if (!isStorageExist()) initializeLocalStorage();
+    setLikedMovies(getLikedMovies());
   }, []);
 
   const openModalDetail = useCallback(async (id: string) => {
@@ -89,10 +107,9 @@ const HomePage: React.FC<IHomePageProps> = () => {
               <Spinner />
             ) : (
               <MovieCardList
-                dataMovie={dataMovie?.Search || []}
+                dataMovie={dataMovieCompareLocal || []}
                 errorMsg={dataMovie?.Error}
                 openModalDetail={openModalDetail}
-                actionCard={handleLikeMovie}
               />
             )}
           </>

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { Alert, Button } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 
 interface ICustomAlertProps {
   isAlertOpen: boolean;

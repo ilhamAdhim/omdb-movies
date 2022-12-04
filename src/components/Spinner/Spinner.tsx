@@ -2,10 +2,10 @@ import { SpinnerRoundFilled } from "spinners-react";
 
 interface ISpinnerProps {
   // TODO : If any
-  //...
+  text?: string;
 }
 
-const Spinner: React.FC<ISpinnerProps> = () => {
+const Spinner: React.FC<ISpinnerProps> = ({ text }) => {
   return (
     <div
       style={{
@@ -16,7 +16,7 @@ const Spinner: React.FC<ISpinnerProps> = () => {
     >
       <div style={{ margin: "auto" }}>
         <SpinnerRoundFilled color="#453DD8" />
-        <div style={{ fontWeight: 600 }}> Loading . . .</div>
+        <div style={{ fontWeight: 600 }}> {text || "Loading..."} </div>
       </div>
     </div>
   );

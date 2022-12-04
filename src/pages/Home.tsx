@@ -2,12 +2,13 @@ import MovieCard from "components/MovieCard";
 import SearchBar from "components/SearchBar";
 import CustomAlert from "components/CustomAlert";
 import Information from "components/Information";
+import Spinner from "components/Spinner";
 
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Container, Row } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
-import Spinner from "components/Spinner";
+import ModalMovieDetail from "components/ModalMovieDetail";
 
 interface IHomePageProps {
   // TODO : Add props here
@@ -21,69 +22,92 @@ const HomePage: React.FC<IHomePageProps> = () => {
   const [error, setError] = useState("");
 
   const [dataMovie, setDataMovie] = useState<IMovieListSearchAPI>();
+  const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
+  const [selectedMovieID, setSelectedMovieID] = useState("");
 
   useEffect(() => {
     console.log(dataMovie);
   }, [dataMovie]);
 
+  // TODO : Get local data to compare which movie is liked
+  // ...
+
+  const openModalDetail = useCallback(async (id: string) => {
+    setSelectedMovieID(id);
+    setIsModalDetailOpen(true);
+  }, []);
+
+  const closeModalDetail = () => {
+    setSelectedMovieID("");
+    setIsModalDetailOpen(false);
+  };
+
   return (
-    <Container>
-      <Link to="/favorited-movies">
-        <Button>Menuju detail</Button>
-      </Link>
-      Ini Home page
-      <br />
-      <SearchBar
-        setError={setError}
-        setIsLoading={setIsLoading}
-        setDataMovie={setDataMovie}
-        setIsSearching={setIsSearching}
-        setIsErrorModalShown={setIsErrorModalShown}
-      />
-      {/* <Button onClick={() => setIsSearching((prev) => !prev)}>Search</Button> */}
-      <br />
-      {/* {!isLoading ? dataMovie?.Search?.map((movie) => (<> {movie.Title} </>))} */}
-      {isSearching ? (
-        <>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <>
-              <h2>Hasil movie</h2>
-              <Row xs={1} sm={1} md={2} lg={3}>
-                {dataMovie?.Search?.map((movie: IMovieItemSearchAPI) => (
-                  <MovieCard
-                    key={movie.imdbID}
-                    title={movie.Title}
-                    year={movie.Year}
-                    poster={movie.Poster}
-                    {...movie}
-                  />
-                ))}
-              </Row>
-            </>
-          )}
-        </>
-      ) : (
-        <Information
-          fullpage={false}
-          title="Let's search some movies!"
-          SVGComponent={
-            <SearchMovieSVG
-              style={{ height: "200px", width: "auto", padding: 20 }}
-            />
-          }
+    <>
+      <Container style={{ overflowX: "hidden" }}>
+        <Link to="/favorited-movies">
+          <Button>Menuju detail</Button>
+        </Link>
+        Ini Home page
+        <br />
+        <SearchBar
+          setError={setError}
+          setIsLoading={setIsLoading}
+          setDataMovie={setDataMovie}
+          setIsSearching={setIsSearching}
+          setIsErrorModalShown={setIsErrorModalShown}
+        />
+        <br />
+        {isSearching ? (
+          <>
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <>
+                <h2 style={{ margin: "1.5em 0" }}>Movie Result</h2>
+                <Row xs={1} sm={1} md={2} lg={3}>
+                  {dataMovie?.Search?.map((movie: IMovieItemSearchAPI) => (
+                    <MovieCard
+                      key={movie.imdbID}
+                      title={movie.Title}
+                      year={movie.Year}
+                      poster={movie.Poster}
+                      openModalDetail={openModalDetail}
+                      {...movie}
+                    />
+                  ))}
+                </Row>
+              </>
+            )}
+          </>
+        ) : (
+          <Information
+            fullpage={false}
+            title="Let's search some movies!"
+            SVGComponent={
+              <SearchMovieSVG
+                style={{ height: "200px", width: "auto", padding: 20 }}
+              />
+            }
+          />
+        )}
+        {error && (
+          <CustomAlert
+            title={error}
+            variant="danger"
+            isAlertOpen={isErrorModalShown}
+            setIsAlertOpen={setIsErrorModalShown}
+          />
+        )}
+      </Container>
+      {isModalDetailOpen && (
+        <ModalMovieDetail
+          imdbIDCurrent={selectedMovieID}
+          isModalDetailOpen={isModalDetailOpen}
+          handleCloseModal={closeModalDetail}
         />
       )}
-      {error && (
-        <CustomAlert
-          title={error}
-          variant="danger"
-          isAlertOpen={isErrorModalShown}
-          setIsAlertOpen={setIsErrorModalShown}
-        />
-      )}
-    </Container>
+    </>
   );
 };
 

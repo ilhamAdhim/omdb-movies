@@ -1,7 +1,6 @@
 import { getSearchMovie } from "data/data-source";
 import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
-import { Button, Form } from "react-bootstrap";
+import styles from "./Searchbar.module.css";
 
 interface ISearchbarProps {
   // TODO: Can be converted into redux reducers
@@ -21,7 +20,6 @@ const SearchBar: React.FC<ISearchbarProps> = ({
   setIsSearching,
 }) => {
   const [searchValue, setSearchValue] = useState("");
-  // const [isValidated, setIsValidated] = useState(false);
 
   const handleSearch = async (event: any) => {
     event.preventDefault();
@@ -29,13 +27,13 @@ const SearchBar: React.FC<ISearchbarProps> = ({
     if (searchValue !== "") {
       setIsSearching(true);
       try {
-        console.log("mencioba");
         setIsLoading(true);
         const data = await getSearchMovie(searchValue);
         setDataMovie(data);
         console.log(data);
       } catch (error) {
         setError(error as string);
+        setIsErrorModalShown(true);
       } finally {
         setIsLoading(false);
       }
@@ -47,12 +45,14 @@ const SearchBar: React.FC<ISearchbarProps> = ({
 
   return (
     <>
-      <Form onSubmit={handleSearch}>
-        <input placeholder="Search Movies..." onChange={onChangeSearchValue} />
-        <Button type="submit">
-          <FaSearch />
-        </Button>
-      </Form>
+      <form className={styles["search-box"]} onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search Movies..."
+          onChange={onChangeSearchValue}
+        />
+        <button type="reset" />
+      </form>
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { getSearchMovie } from "data/data-source";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styles from "./Searchbar.module.css";
 
 interface ISearchbarProps {
@@ -10,6 +10,7 @@ interface ISearchbarProps {
   setError: (state: string) => void;
   setDataMovie: (state: IMovieListSearchAPI) => void;
   setIsSearching: (state: boolean) => void;
+  setDataMovieCompareLocal?: (state: IMovieItemSavedLocal[]) => void;
 }
 
 const SearchBar: React.FC<ISearchbarProps> = ({
@@ -18,6 +19,7 @@ const SearchBar: React.FC<ISearchbarProps> = ({
   setError,
   setDataMovie,
   setIsSearching,
+  setDataMovieCompareLocal,
 }) => {
   const [searchValue, setSearchValue] = useState("");
 
@@ -30,7 +32,13 @@ const SearchBar: React.FC<ISearchbarProps> = ({
         setIsLoading(true);
         const data = await getSearchMovie(searchValue);
         setDataMovie(data);
-        console.log(data);
+
+        // Compare with local data
+        // const localData = JSON.parse(localStorage.getItem("likedMovies") || "[]");
+        // if(localData.length > 0){
+
+        //   setDataMovieCompareLocal()
+        // }
       } catch (error) {
         setError(error as string);
         setIsErrorModalShown(true);
@@ -40,20 +48,25 @@ const SearchBar: React.FC<ISearchbarProps> = ({
     } else setIsSearching(false);
   };
 
+  const resetKeyword = useCallback(() => {
+    setSearchValue("");
+    setIsSearching(false);
+  }, [setIsSearching]);
+
   const onChangeSearchValue = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSearchValue(event.target.value);
 
   return (
-    <>
+    <div style={{ margin: "auto 0" }}>
       <form className={styles["search-box"]} onSubmit={handleSearch}>
         <input
           type="text"
           placeholder="Search Movies..."
           onChange={onChangeSearchValue}
         />
-        <button type="reset" />
+        <button type="reset" onClick={resetKeyword} />
       </form>
-    </>
+    </div>
   );
 };
 

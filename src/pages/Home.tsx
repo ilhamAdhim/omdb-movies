@@ -1,14 +1,19 @@
-import MovieCard from "components/MovieCard";
 import SearchBar from "components/SearchBar";
 import CustomAlert from "components/CustomAlert";
 import Information from "components/Information";
 import Spinner from "components/Spinner";
+import ModalMovieDetail from "components/ModalMovieDetail";
+import MovieCardList from "components/MovieCardList";
 
 import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import { Button, Container, Row } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
-import ModalMovieDetail from "components/ModalMovieDetail";
+import {
+  initializeLocalStorage,
+  isStorageExist,
+  likeMovie,
+} from "data/data-source";
 
 interface IHomePageProps {
   // TODO : Add props here
@@ -22,15 +27,22 @@ const HomePage: React.FC<IHomePageProps> = () => {
   const [error, setError] = useState("");
 
   const [dataMovie, setDataMovie] = useState<IMovieListSearchAPI>();
+  // const [dataMovieCompareLocal, setDataMovieCompareLocal] =
+  //   useState<IMovieItemSavedLocal[]>();
+
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
   const [selectedMovieID, setSelectedMovieID] = useState("");
 
-  useEffect(() => {
-    console.log(dataMovie);
-  }, [dataMovie]);
+  const handleLikeMovie = (movie: IMovieItemSavedLocal) => {
+    likeMovie(movie);
+  };
 
   // TODO : Get local data to compare which movie is liked
   // ...
+
+  useEffect(() => {
+    if (!isStorageExist()) initializeLocalStorage();
+  }, []);
 
   const openModalDetail = useCallback(async (id: string) => {
     setSelectedMovieID(id);
@@ -46,38 +58,42 @@ const HomePage: React.FC<IHomePageProps> = () => {
     <>
       <Container style={{ overflowX: "hidden" }}>
         <Link to="/favorited-movies">
-          <Button>Menuju detail</Button>
+          <Button>Menuju favorit</Button>
         </Link>
         Ini Home page
         <br />
-        <SearchBar
-          setError={setError}
-          setIsLoading={setIsLoading}
-          setDataMovie={setDataMovie}
-          setIsSearching={setIsSearching}
-          setIsErrorModalShown={setIsErrorModalShown}
-        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0 1em",
+          }}
+        >
+          <h2 style={{ margin: "1.5em 0" }}>
+            {isSearching ? "Movie Result" : "Search Movies"}
+          </h2>
+
+          <SearchBar
+            setError={setError}
+            setIsLoading={setIsLoading}
+            setDataMovie={setDataMovie}
+            setIsSearching={setIsSearching}
+            setIsErrorModalShown={setIsErrorModalShown}
+            // setDataMovieCompareLocal={setDataMovieCompareLocal}
+          />
+        </div>
         <br />
         {isSearching ? (
           <>
             {isLoading ? (
               <Spinner />
             ) : (
-              <>
-                <h2 style={{ margin: "1.5em 0" }}>Movie Result</h2>
-                <Row xs={1} sm={1} md={2} lg={3}>
-                  {dataMovie?.Search?.map((movie: IMovieItemSearchAPI) => (
-                    <MovieCard
-                      key={movie.imdbID}
-                      title={movie.Title}
-                      year={movie.Year}
-                      poster={movie.Poster}
-                      openModalDetail={openModalDetail}
-                      {...movie}
-                    />
-                  ))}
-                </Row>
-              </>
+              <MovieCardList
+                dataMovie={dataMovie?.Search || []}
+                errorMsg={dataMovie?.Error}
+                openModalDetail={openModalDetail}
+                actionCard={handleLikeMovie}
+              />
             )}
           </>
         ) : (

@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const getSearchMovie = async (title: string) => {
-  console.log(title, "title di api");
   try {
     const response = await axios.get(
       `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${title}`
@@ -23,19 +22,36 @@ export const getMovieById = async (id: string) => {
   }
 };
 
+export const isStorageExist = () => {
+  if (Storage === undefined) {
+    alert("Local Storage is not supported by your browser");
+    return false;
+  }
+  return true;
+};
+
+export const initializeLocalStorage = () =>
+  localStorage.setItem("likedMovies", JSON.parse("[]"));
+
 export const getLikedMovies = () => {
   let likedMovies = localStorage.getItem("likedMovies");
   return likedMovies ? JSON.parse(likedMovies) : [];
 };
 
 export const likeMovie = (movieItem: IMovieItemSavedLocal) => {
-  localStorage.setItem("likedMovies", JSON.stringify(movieItem));
+  let likedMovies = getLikedMovies();
+  localStorage.setItem(
+    "likedMovies",
+    JSON.stringify([...likedMovies, movieItem])
+  );
 };
 
 export const unlikeMovie = (movieItem: IMovieItemSavedLocal) => {
+  console.log(movieItem);
   let newList = getLikedMovies().filter(
     (movie: IMovieItemSavedLocal) => movie.imdbID !== movieItem.imdbID
   );
 
+  console.log(newList);
   localStorage.setItem("likedMovies", JSON.stringify(newList));
 };

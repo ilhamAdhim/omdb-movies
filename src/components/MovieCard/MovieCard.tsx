@@ -1,27 +1,39 @@
+import useMediaQuery from "hooks/useMediaQuery";
 import React from "react";
 import { Card, Col, Button } from "react-bootstrap";
 import { FaHeart } from "react-icons/fa";
 
+type actionCardTypeProps = IMovieItemSavedLocal;
 interface IMovieCardProps {
+  id: number;
   imdbID: string;
   title: string;
   poster: string;
   year: string;
   isLiked?: boolean;
   openModalDetail: (imdbID: string) => void;
+  actionCard: (movie: actionCardTypeProps) => void;
 }
 
 const MovieCard: React.FC<IMovieCardProps> = ({
+  id,
   imdbID,
   title,
   poster,
   year,
   isLiked,
   openModalDetail,
+  actionCard,
   ...props
 }) => {
+  const isSmallScreen = useMediaQuery("(max-width: 600px)");
+
   return (
-    <Col style={{ marginTop: 10 }} data-aos="fade-left" data-aos-delay={100}>
+    <Col
+      style={{ marginTop: 10 }}
+      data-aos="fade-left"
+      data-aos-delay={isSmallScreen ? 0 : id * 50}
+    >
       <Card>
         <Card.Img variant="top" src={poster} height={500} />
         <Card.Body>
@@ -57,8 +69,17 @@ const MovieCard: React.FC<IMovieCardProps> = ({
             See Details
           </Button>
           <Button
-            variant={isLiked ? "outline-danger" : "primary"}
             style={{ borderRadius: "50%" }}
+            onClick={() =>
+              actionCard({
+                imdbID,
+                Title: title,
+                Poster: poster,
+                Year: year,
+                isLiked: true,
+              })
+            }
+            variant={isLiked ? "outline-danger" : "primary"}
           >
             <FaHeart color={isLiked ? "maroon" : "white"} />
           </Button>

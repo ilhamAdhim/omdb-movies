@@ -2,13 +2,13 @@ interface IMovieListSearchAPI {
   Search: IMovieItemSearchAPI[];
   totalResults: string;
   Response: string;
+  Error?: string;
 }
 
 interface IMovieItemSearchAPI {
   Title: string;
   Year: string;
   imdbID: string;
-  Type: string;
   Poster: string;
 }
 

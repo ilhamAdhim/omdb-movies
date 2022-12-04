@@ -1,14 +1,8 @@
 import useMediaQuery from "hooks/useMediaQuery";
 import { getMovieById } from "data/data-source";
 import { useCallback, useEffect, useState } from "react";
-import { Modal, Button, Badge } from "react-bootstrap";
-import {
-  FaHeart,
-  FaUserAlt,
-  FaStar,
-  FaTags,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { Modal, Badge } from "react-bootstrap";
+import { FaUserAlt, FaStar, FaTags, FaCalendarAlt } from "react-icons/fa";
 import { RiMovie2Fill } from "react-icons/ri";
 import Spinner from "components/Spinner";
 
@@ -17,8 +11,6 @@ interface IModalMovieDetailProps {
   isLiked?: boolean;
   isModalDetailOpen: boolean;
   handleCloseModal?: () => void;
-  handleLikeMovie?: (imdbID: string) => void;
-  handleDislikeMovie?: (imdbID: string) => void;
 }
 
 const ModalMovieDetail: React.FC<IModalMovieDetailProps> = ({
@@ -26,8 +18,6 @@ const ModalMovieDetail: React.FC<IModalMovieDetailProps> = ({
   isLiked,
   isModalDetailOpen,
   handleCloseModal,
-  handleLikeMovie,
-  handleDislikeMovie,
 }) => {
   const isSmallScreen = useMediaQuery("(max-width: 600px)");
 
@@ -149,15 +139,6 @@ const ModalMovieDetail: React.FC<IModalMovieDetailProps> = ({
           </div>
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button
-          style={{ borderRadius: "50%" }}
-          disabled={isLoading}
-          variant={isLiked ? "outline-danger" : "primary"}
-        >
-          <FaHeart color={isLiked ? "maroon" : "white"} />
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };

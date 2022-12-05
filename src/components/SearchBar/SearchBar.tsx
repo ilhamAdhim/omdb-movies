@@ -18,7 +18,6 @@ const SearchBar: React.FC<ISearchbarProps> = ({
   const dispatch = useAppDispatch();
 
   const searchValue = useAppSelector((state) => state.movie.searchValue);
-  console.log(searchValue, "searchValue");
 
   const handleSearch = async (event: any) => {
     event.preventDefault();

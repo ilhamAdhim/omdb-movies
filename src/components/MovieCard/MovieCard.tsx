@@ -1,5 +1,7 @@
 import useMediaQuery from "hooks/useMediaQuery";
+import styles from "./MovieCard.module.css";
 import React, { useState } from "react";
+
 import { Card, Col, Button } from "react-bootstrap";
 import { FaHeart } from "react-icons/fa";
 import { likeMovie, unlikeMovie } from "data/data-source";
@@ -75,6 +77,7 @@ const MovieCard: React.FC<IMovieCardProps> = ({
           </Button>
           <Button
             style={{ borderRadius: "50%" }}
+            className={movieLiked ? styles.buttonLiked : styles.buttonUnliked}
             onClick={() =>
               handleLike({
                 imdbID,

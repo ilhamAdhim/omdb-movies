@@ -1,0 +1,52 @@
+/* ---------- Useful Button styling ---------- */
+
+.buttonLiked,
+.buttonUnliked {
+  position: relative;
+  cursor: pointer;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s; /* Safari */
+}
+
+.buttonLiked:hover,
+.buttonUnliked:hover {
+  transition-duration: 0.2s;
+}
+
+.buttonLiked:after,
+.buttonUnliked:after {
+  border-radius: 50%;
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  transition: all 0.5s;
+  box-shadow: 0 0 10px 20px rgb(255, 255, 255);
+}
+
+.buttonLiked:active:after {
+  box-shadow: 0 0 0 0 red;
+}
+.buttonUnliked:active:after {
+  box-shadow: 0 0 0 0 blue;
+}
+
+.buttonLiked:active:after,
+.buttonUnliked:active:after {
+  position: absolute;
+  border-radius: 50%;
+  left: 0;
+  top: 0;
+  opacity: 1;
+  transition: 0s;
+}
+
+.buttonLiked:active,
+.buttonUnliked:active {
+  top: 1px;
+}

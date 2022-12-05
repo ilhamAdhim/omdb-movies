@@ -5,7 +5,7 @@ import Spinner from "components/Spinner";
 import ModalMovieDetail from "components/ModalMovieDetail";
 import MovieCardList from "components/MovieCardList";
 
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
@@ -16,7 +16,7 @@ import {
 } from "data/data-source";
 import { RiMovie2Fill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "app/hooks";
-import { updateMovies } from "features/movie/movieSlice";
+import { updateMovies, updateStatus } from "features/movie/movieSlice";
 
 const HomePage: React.FC = () => {
   const appDispatch = useAppDispatch();
@@ -55,18 +55,13 @@ const HomePage: React.FC = () => {
       }
       appDispatch(updateMovies(comparedMovies || []));
     }
-  }, [dataMovie, likedMovies, appDispatch, status]);
-
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log("Location changed", location);
-  }, [location]);
+  }, [dataMovie, likedMovies, appDispatch, status, dataMovies?.length]);
 
   useEffect(() => {
     if (!isStorageExist()) initializeLocalStorage();
     setLikedMovies(getLikedMovies());
-  }, []);
+    appDispatch(updateStatus("initial-load"));
+  }, [appDispatch]);
 
   const openModalDetail = useCallback(async (id: string) => {
     setSelectedMovieID(id);

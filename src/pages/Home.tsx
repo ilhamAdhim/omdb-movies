@@ -5,7 +5,7 @@ import Spinner from "components/Spinner";
 import ModalMovieDetail from "components/ModalMovieDetail";
 import MovieCardList from "components/MovieCardList";
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import { ReactComponent as SearchMovieSVG } from "assets/search-movie.svg";
@@ -14,27 +14,28 @@ import {
   initializeLocalStorage,
   isStorageExist,
 } from "data/data-source";
+import { RiMovie2Fill } from "react-icons/ri";
+import { useAppDispatch, useAppSelector } from "app/hooks";
+import { updateMovies } from "features/movie/movieSlice";
 
 const HomePage: React.FC = () => {
-  const [isSearching, setIsSearching] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const appDispatch = useAppDispatch();
+  const { dataMovies, status } = useAppSelector((state) => state.movie);
+
   const [isErrorModalShown, setIsErrorModalShown] = useState(false);
   const [error, setError] = useState("");
 
   const [dataMovie, setDataMovie] = useState<IMovieListSearchAPI>();
   const [likedMovies, setLikedMovies] = useState<IMovieItemSavedLocal[]>([]);
-  const [dataMovieCompareLocal, setDataMovieCompareLocal] =
-    useState<IMovieItemSavedLocal[]>();
 
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
   const [selectedMovieID, setSelectedMovieID] = useState("");
 
-  // TODO : Get local data to compare which movie is liked
-
   useEffect(() => {
-    if (likedMovies?.length > 0) {
-      setDataMovieCompareLocal(
-        dataMovie?.Search?.map((movie) => {
+    let comparedMovies: IMovieItemSavedLocal[] | undefined = [];
+    if (dataMovies?.length === 0 || status === "loading") {
+      if (likedMovies?.length > 0) {
+        comparedMovies = dataMovie?.Search?.map((movie) => {
           const isLiked = likedMovies?.find(
             (likedMovie: IMovieItemSavedLocal) =>
               likedMovie.imdbID === movie.imdbID
@@ -43,19 +44,24 @@ const HomePage: React.FC = () => {
             ...movie,
             isLiked: !!isLiked,
           };
-        })
-      );
-    } else {
-      setDataMovieCompareLocal(
-        dataMovie?.Search?.map((movie) => {
+        });
+      } else {
+        comparedMovies = dataMovie?.Search?.map((movie) => {
           return {
             ...movie,
             isLiked: false,
           };
-        })
-      );
+        });
+      }
+      appDispatch(updateMovies(comparedMovies || []));
     }
-  }, [dataMovie, likedMovies]);
+  }, [dataMovie, likedMovies, appDispatch, status]);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("Location changed", location);
+  }, [location]);
 
   useEffect(() => {
     if (!isStorageExist()) initializeLocalStorage();
@@ -76,9 +82,11 @@ const HomePage: React.FC = () => {
     <>
       <Container style={{ overflowX: "hidden" }}>
         <Link to="/favorited-movies">
-          <Button>Menuju favorit</Button>
+          <Button variant="danger" style={{ marginTop: "1em" }}>
+            <span style={{ marginRight: ".5em" }}> My Movies</span>
+            <RiMovie2Fill />
+          </Button>
         </Link>
-        Ini Home page
         <br />
         <div
           style={{
@@ -88,32 +96,17 @@ const HomePage: React.FC = () => {
           }}
         >
           <h2 style={{ margin: "1.5em 0" }}>
-            {isSearching ? "Movie Result" : "Search Movies"}
+            {status === "initial-load" ? "Movie Result" : "Search Movies"}
           </h2>
 
           <SearchBar
             setError={setError}
-            setIsLoading={setIsLoading}
             setDataMovie={setDataMovie}
-            setIsSearching={setIsSearching}
             setIsErrorModalShown={setIsErrorModalShown}
-            // setDataMovieCompareLocal={setDataMovieCompareLocal}
           />
         </div>
         <br />
-        {isSearching ? (
-          <>
-            {isLoading ? (
-              <Spinner />
-            ) : (
-              <MovieCardList
-                dataMovie={dataMovieCompareLocal || []}
-                errorMsg={dataMovie?.Error}
-                openModalDetail={openModalDetail}
-              />
-            )}
-          </>
-        ) : (
+        {status === "initial-load" ? (
           <Information
             fullpage={false}
             title="Let's search some movies!"
@@ -123,6 +116,18 @@ const HomePage: React.FC = () => {
               />
             }
           />
+        ) : (
+          <>
+            {status === "loading" ? (
+              <Spinner />
+            ) : (
+              <MovieCardList
+                dataMovie={dataMovies || []}
+                errorMsg={dataMovie?.Error}
+                openModalDetail={openModalDetail}
+              />
+            )}
+          </>
         )}
         {error && (
           <CustomAlert

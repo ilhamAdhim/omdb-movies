@@ -18,7 +18,7 @@ const FavoritedMoviePage: React.FC = () => {
   useEffect(() => {
     const likedMovies = getLikedMovies();
     setDataLikedMovie(likedMovies);
-  }, [dataLikedMovie]);
+  }, []);
 
   const openModalDetail = useCallback(async (id: string) => {
     setSelectedMovieID(id);

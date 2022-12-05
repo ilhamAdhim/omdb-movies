@@ -1,60 +1,52 @@
 import styles from "./Searchbar.module.css";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { getSearchMovie } from "data/data-source";
+import { useAppDispatch, useAppSelector } from "app/hooks";
+import { updateSearchValue, updateStatus } from "features/movie/movieSlice";
 
 interface ISearchbarProps {
-  // TODO: Can be converted into redux reducers
-  // ...
-  setIsLoading: (state: boolean) => void;
   setIsErrorModalShown: (state: boolean) => void;
   setError: (state: string) => void;
   setDataMovie: (state: IMovieListSearchAPI) => void;
-  setIsSearching: (state: boolean) => void;
-  setDataMovieCompareLocal?: (state: IMovieItemSavedLocal[]) => void;
 }
 
 const SearchBar: React.FC<ISearchbarProps> = ({
-  setIsLoading,
   setIsErrorModalShown,
   setError,
   setDataMovie,
-  setIsSearching,
-  setDataMovieCompareLocal,
 }) => {
-  const [searchValue, setSearchValue] = useState("");
+  const dispatch = useAppDispatch();
+
+  const searchValue = useAppSelector((state) => state.movie.searchValue);
+  console.log(searchValue, "searchValue");
 
   const handleSearch = async (event: any) => {
     event.preventDefault();
-
     if (searchValue !== "") {
-      setIsSearching(true);
       try {
-        setIsLoading(true);
+        dispatch(updateStatus("loading"));
         const data = await getSearchMovie(searchValue);
         setDataMovie(data);
-
-        // Compare with local data
-        // const localData = JSON.parse(localStorage.getItem("likedMovies") || "[]");
-        // if(localData.length > 0){
-
-        //   setDataMovieCompareLocal()
-        // }
       } catch (error) {
         setError(error as string);
         setIsErrorModalShown(true);
       } finally {
-        setIsLoading(false);
+        dispatch(updateStatus("idle"));
       }
-    } else setIsSearching(false);
+    } else dispatch(updateStatus("initial-load"));
   };
 
   const resetKeyword = useCallback(() => {
-    setSearchValue("");
-    setIsSearching(false);
-  }, [setIsSearching]);
+    dispatch(updateSearchValue(""));
+    dispatch(updateStatus("initial-load"));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (searchValue === "") dispatch(updateStatus("initial-load"));
+  }, [searchValue, dispatch]);
 
   const onChangeSearchValue = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setSearchValue(event.target.value);
+    dispatch(updateSearchValue(event.target.value));
 
   return (
     <div style={{ margin: "auto 0" }}>

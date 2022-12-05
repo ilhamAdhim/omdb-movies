@@ -3,7 +3,7 @@ import axios from "axios";
 export const getSearchMovie = async (title: string) => {
   try {
     const response = await axios.get(
-      `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${title}`
+      `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&s=${title}`
     );
     return response.data;
   } catch (error) {

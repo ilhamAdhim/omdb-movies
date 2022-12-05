@@ -14,7 +14,7 @@ export const getSearchMovie = async (title: string) => {
 export const getMovieById = async (id: string) => {
   try {
     const response = await axios.get(
-      `http://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&i=${id}`
+      `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_API_KEY}&i=${id}`
     );
     return response.data;
   } catch (error) {

@@ -1,7 +1,6 @@
 import { SpinnerRoundFilled } from "spinners-react";
 
 interface ISpinnerProps {
-  // TODO : If any
   text?: string;
 }
 

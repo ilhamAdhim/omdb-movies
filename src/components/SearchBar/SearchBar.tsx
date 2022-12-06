@@ -19,7 +19,7 @@ const SearchBar: React.FC<ISearchbarProps> = ({
 
   const searchValue = useAppSelector((state) => state.movie.searchValue);
 
-  const handleSearch = async (event: any) => {
+  const handleSearch = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (searchValue !== "") {
       try {

@@ -33,29 +33,27 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     let comparedMovies: IMovieItemSavedLocal[] | undefined = [];
-    if (dataMovies?.length === 0 || status === "loading") {
-      if (likedMovies?.length > 0) {
-        comparedMovies = dataMovie?.Search?.map((movie) => {
-          const isLiked = likedMovies?.find(
-            (likedMovie: IMovieItemSavedLocal) =>
-              likedMovie.imdbID === movie.imdbID
-          );
-          return {
-            ...movie,
-            isLiked: !!isLiked,
-          };
-        });
-      } else {
-        comparedMovies = dataMovie?.Search?.map((movie) => {
-          return {
-            ...movie,
-            isLiked: false,
-          };
-        });
-      }
-      appDispatch(updateMovies(comparedMovies || []));
+    if (likedMovies?.length > 0) {
+      comparedMovies = dataMovie?.Search?.map((movie) => {
+        const isLiked = likedMovies?.find(
+          (likedMovie: IMovieItemSavedLocal) =>
+            likedMovie.imdbID === movie.imdbID
+        );
+        return {
+          ...movie,
+          isLiked: !!isLiked,
+        };
+      });
+    } else {
+      comparedMovies = dataMovie?.Search?.map((movie) => {
+        return {
+          ...movie,
+          isLiked: false,
+        };
+      });
     }
-  }, [dataMovie, likedMovies, appDispatch, status, dataMovies?.length]);
+    appDispatch(updateMovies(comparedMovies || []));
+  }, [dataMovie, likedMovies, appDispatch]);
 
   useEffect(() => {
     if (!isStorageExist()) initializeLocalStorage();

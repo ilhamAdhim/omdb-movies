@@ -19,5 +19,5 @@ For the website in deployed URL, it's pre-configured on my behalf so that the us
 
 ## Possible Improvements
 
-- To make more customized UI with more developer-experience, we can utilize Tailwind CSS or Chakra UI. Both these options have easier implementation of responsive web design as well.
+- To make more customized UI with smoother developer-experience, we can utilize Tailwind CSS or Chakra UI. Both these options have easier implementation of responsive web design as well.
 - `Redux` may be a good option for the larger scale application. In this case, it is quite an overkill. Alternatively, simpler application can use `React Context API`.
